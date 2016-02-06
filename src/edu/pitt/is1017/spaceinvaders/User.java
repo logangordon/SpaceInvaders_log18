@@ -89,6 +89,7 @@ public class User {
 			} else {
 				this.loggedIn = false;
 				JOptionPane.showMessageDialog(null, "Invalid credentials");
+				db.closeConnection();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

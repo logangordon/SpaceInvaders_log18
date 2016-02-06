@@ -96,14 +96,14 @@ public class RegistrationGUI {
 		btnRegister = new JButton("Register");
 		btnRegister.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String password = txtPassword.getPassword().toString();
-				String confPswd = txtConfirmPassword.getPassword().toString();
+				String password = String.valueOf(txtPassword.getPassword());
+				String confPswd = String.valueOf(txtConfirmPassword.getPassword());
 				if(password.equals(confPswd)){
-					JOptionPane.showMessageDialog(null, password + confPswd);
-				} else {
 					User user = new User(txtLastName.getText(), txtFirstName.getText(),
-							txtEmail.getText(), txtPassword.getPassword().toString());
+					txtEmail.getText(), password);
 					JOptionPane.showMessageDialog(null, "Account created: " + Integer.toString(user.getUserID()));
+				} else {
+					JOptionPane.showMessageDialog(null, "Passwords must match.");
 				}
 			}
 		});
