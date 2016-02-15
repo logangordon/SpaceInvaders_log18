@@ -8,6 +8,7 @@ import java.awt.event.WindowEvent;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
@@ -84,6 +85,11 @@ public class LoginGUI {
 		btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				User user = new User(txtEmail.getText(), String.valueOf(txtPswd.getPassword()));
+				if(user.isLoggedIn()){
+					Game.startNewGame(user);
+				} else {
+					JOptionPane.showMessageDialog(null, "Invalid credentials");
+				}
 			}
 		});
 		btnLogin.setBounds(95, 110, 75, 20);

@@ -4,8 +4,6 @@ import edu.pitt.utilities.DbUtilities;
 import java.lang.StringBuilder;
 import java.sql.ResultSet;
 
-import javax.swing.JOptionPane;
-
 public class User {
 	private int userID;
 	private String lastName;
@@ -53,7 +51,7 @@ public class User {
 		StringBuilder query = new StringBuilder(250);
 		query.append("SELECT lastName, firstName, email ");
 		query.append("FROM users ");
-		query.append("WHERE userID = '" + Integer.toString(userID) + "'");
+		query.append("WHERE userID = '" + Integer.toString(userID) + "'; ");
 		ResultSet user = db.getResultSet(query.toString());
 		try{
 			user.next();
@@ -74,7 +72,7 @@ public class User {
 		query.append("SELECT lastName, firstName, userID ");
 		query.append("FROM users ");
 		query.append("WHERE email = '"+ email + "' ");
-		query.append("AND password = MD5('" + password + "')");
+		query.append("AND password = MD5('" + password + "'); ");
 		ResultSet user = db.getResultSet(query.toString());
 		try{
 			if(user.next()){
@@ -85,10 +83,8 @@ public class User {
 				this.password = password;
 				this.loggedIn = true;
 				db.closeConnection();
-				JOptionPane.showMessageDialog(null, "Login successful!");
 			} else {
 				this.loggedIn = false;
-				JOptionPane.showMessageDialog(null, "Invalid credentials");
 				db.closeConnection();
 			}
 		} catch (Exception e) {
@@ -107,14 +103,14 @@ public class User {
 		query.append("INSERT INTO users ");
 		query.append("(lastName, firstName, email, password) ");
 		query.append("VALUES ('" + lastName + "', '" + firstName + "', ");
-		query.append("'" + email + "', MD5('" + password + "') ) ");
+		query.append("'" + email + "', MD5('" + password + "') ); ");
 		db.executeQuery(query.toString());
 		
 		query = new StringBuilder(100);
 		query.append("SELECT userID ");
 		query.append("FROM users ");
 		query.append("WHERE email = '" + email + "' ");
-		query.append("AND password = MD5('" + password + "')");
+		query.append("AND password = MD5('" + password + "'); ");
 		ResultSet rs = db.getResultSet(query.toString());
 		try {
 			rs.next();
@@ -131,7 +127,7 @@ public class User {
 		query.append("UPDATE users ");
 		query.append("SET lastName = '" + this.lastName + "','");
 		query.append("firstName = '" + this.firstName + "','");
-		query.append("email = " + this.email + "' ");
+		query.append("email = " + this.email + "'; ");
 		if(this.password != null){
 			query.append(",password = MD5('" + this.password + "')");
 		}

@@ -447,4 +447,15 @@ public class Game extends Canvas {
 		// using the actual main thread to run the game.
 		g.gameLoop();
 	}
+	
+	public static void startNewGame(User user){
+		try{
+			ScoreTracker.scoreTracker = new ScoreTracker(user);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		Game g = new Game();
+		g.gameLoop();
+	}
+
 }
