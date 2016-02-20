@@ -49,6 +49,8 @@ public class Game extends Canvas {
 	private long firingInterval = 500;
 	/** The number of aliens left on the screen */
 	private int alienCount;
+	/** The user whose score is being recorded */
+	private User user;
 	
 	/** The message to display which waiting for a key press */
 	private String message = "";
@@ -66,7 +68,9 @@ public class Game extends Canvas {
 	/**
 	 * Construct our game and set it running.
 	 */
-	public Game() {
+	public Game(User user) {
+		this.user = user;
+		
 		// create a frame to contain our game
 		JFrame container = new JFrame("Space Invaders 101");
 		
@@ -118,9 +122,17 @@ public class Game extends Canvas {
 	 * create a new set.
 	 */
 	private void startGame() {
+		// reset the score tracker
+		try {
+			ScoreTracker.scoreTracker = new ScoreTracker(user);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		// clear out any existing entities and intialise a new set
 		entities.clear();
 		initEntities();
+
 		
 		// blank out any keyboard settings we might currently have
 		leftPressed = false;
@@ -172,6 +184,7 @@ public class Game extends Canvas {
 	 */
 	public void notifyDeath() {
 		message = "Oh no! They got you, try again?";
+		ScoreTracker.scoreTracker.recordFinalScore();
 		waitingForKeyPress = true;
 	}
 	
@@ -181,6 +194,7 @@ public class Game extends Canvas {
 	 */
 	public void notifyWin() {
 		message = "Well done! You Win!";
+		ScoreTracker.scoreTracker.recordFinalScore();
 		waitingForKeyPress = true;
 	}
 	
@@ -237,9 +251,9 @@ public class Game extends Canvas {
 	 */
 	public void gameLoop() {
 		long lastLoopTime = System.currentTimeMillis();
-		
 		// keep looping round til the game ends
 		while (gameRunning) {
+			
 			// work out how long its been since the last update, this
 			// will be used to calculate how far the entities should
 			// move this loop
@@ -439,22 +453,9 @@ public class Game extends Canvas {
 	 * 
 	 * @param argv The arguments that are passed into our game
 	 */
-	public static void main(String argv[]) {
-		Game g =new Game();
 
-		// Start the main game loop, note: this method will not
-		// return until the game has finished running. Hence we are
-		// using the actual main thread to run the game.
-		g.gameLoop();
-	}
-	
 	public static void startNewGame(User user){
-		try{
-			ScoreTracker.scoreTracker = new ScoreTracker(user);
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-		Game g = new Game();
+		Game g = new Game(user);
 		g.gameLoop();
 	}
 

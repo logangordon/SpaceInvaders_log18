@@ -86,7 +86,8 @@ public class LoginGUI {
 			public void actionPerformed(ActionEvent arg0) {
 				User user = new User(txtEmail.getText(), String.valueOf(txtPswd.getPassword()));
 				if(user.isLoggedIn()){
-					Game.startNewGame(user);
+					Thread gt = new GameThread(user);
+					gt.start();
 				} else {
 					JOptionPane.showMessageDialog(null, "Invalid credentials");
 				}

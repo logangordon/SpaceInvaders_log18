@@ -37,7 +37,7 @@ public class ScoreTracker {
 		ResultSet rs = db.getResultSet(query.toString());
 		try{
 			if(rs.next()){
-				this.highestScore = rs.getInt(0);
+				this.highestScore = rs.getInt(1);
 			} else {
 				this.highestScore = 0;
 			}
@@ -54,10 +54,10 @@ public class ScoreTracker {
 		query.append("INSERT INTO runningscores ");
 		query.append("(gameID,scoreType,scoreValue,fk_userID,dateTimeEntered) ");
 		query.append("VALUES ('" + this.gameID + "', ");
-		query.append("'" + (point==1? "1" : "0") + "', ");
+		query.append("b'" + (point==1? "1" : "0") + "', ");
 		query.append("'" + this.currentScore + "', ");
 		query.append("'" + this.user.getUserID() + "', ");
-		query.append("'" + new SimpleDateFormat("YYYY-MM-DD HH:MM:SS").format(new Date()) + "');");
+		query.append("'" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "');");
 		try {
 			db.executeQuery(query.toString());
 		} catch (Exception e) {
@@ -69,15 +69,16 @@ public class ScoreTracker {
 		DbUtilities db = new DbUtilities();
 		StringBuilder query = new StringBuilder(300);
 		query.append("INSERT INTO finalscores ");
-		query.append("(gameID,scoreValue,fk_userID,dateTimeEntered ");
+		query.append("(gameID,scoreValue,fk_userID,dateTimeEntered) ");
 		query.append("VALUES ('" + this.gameID + "', ");
-		query.append("'" + this.highestScore + "', ");
+		query.append("'" + this.currentScore + "', ");
 		query.append("'" + this.user.getUserID() + "', ");
-		query.append("'" + new SimpleDateFormat("YYYY-MM-DD HH:MM:SS").format(new Date()) + "');");
+		query.append("'" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "');");
 		try{
 			db.executeQuery(query.toString());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
+	
 }

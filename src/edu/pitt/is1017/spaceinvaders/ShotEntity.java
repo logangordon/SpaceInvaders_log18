@@ -41,6 +41,11 @@ public class ShotEntity extends Entity {
 		// if we shot off the screen, remove ourselfs
 		if (y < -100) {
 			game.removeEntity(this);
+			
+			// Update score, unless it hit something
+			if(!this.used){
+				ScoreTracker.scoreTracker.recordScore(-1);
+			}
 		}
 	}
 	
@@ -62,6 +67,10 @@ public class ShotEntity extends Entity {
 			// remove the affected entities
 			game.removeEntity(this);
 			game.removeEntity(other);
+			
+			// Update score
+			ScoreTracker.scoreTracker.recordScore(1);
+			// NOTE: Must happen BEFORE notifyAlienKilled, or final score will be wrong
 			
 			// notify the game that the alien has been killed
 			game.notifyAlienKilled();

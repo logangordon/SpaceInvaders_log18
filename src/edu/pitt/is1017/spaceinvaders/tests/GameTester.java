@@ -4,6 +4,6 @@ import edu.pitt.is1017.spaceinvaders.Game;
 
 public class GameTester {
 	public static void main(String[] args){
-		Game.main(null);
+		Game.startNewGame(null);
 	}
 }
