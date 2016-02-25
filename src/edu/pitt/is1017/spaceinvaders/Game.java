@@ -9,10 +9,14 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+
+import edu.pitt.utilities.DbUtilities;
 
 /**
  * http://www.cokeandcode.com/info/tut2d.html
@@ -64,6 +68,8 @@ public class Game extends Canvas {
 	private boolean firePressed = false;
 	/** True if game logic needs to be applied this loop, normally as a result of a game event */
 	private boolean logicRequiredThisLoop = false;
+	/** True if game still needs to process Game End logic */
+	private boolean gameOver = false;
 	
 	/**
 	 * Construct our game and set it running.
@@ -132,12 +138,25 @@ public class Game extends Canvas {
 		// clear out any existing entities and intialise a new set
 		entities.clear();
 		initEntities();
+		gameOver = false;
 
 		
 		// blank out any keyboard settings we might currently have
 		leftPressed = false;
 		rightPressed = false;
 		firePressed = false;
+	}
+	
+	/**
+	 * In case multiple end-game conditions are tripped at once, prevent
+	 * multiple DB calls and pop-up notifications
+	 */
+	private void endGame(){
+		if(!gameOver){
+			gameOver = true;
+			ScoreTracker.scoreTracker.recordFinalScore();
+			displayHighScore();
+		}
 	}
 	
 	/**
@@ -184,7 +203,7 @@ public class Game extends Canvas {
 	 */
 	public void notifyDeath() {
 		message = "Oh no! They got you, try again?";
-		ScoreTracker.scoreTracker.recordFinalScore();
+		endGame();
 		waitingForKeyPress = true;
 	}
 	
@@ -194,8 +213,37 @@ public class Game extends Canvas {
 	 */
 	public void notifyWin() {
 		message = "Well done! You Win!";
-		ScoreTracker.scoreTracker.recordFinalScore();
+		endGame();
 		waitingForKeyPress = true;
+	}
+	
+	public void displayHighScore(){
+		int highscore = ScoreTracker.scoreTracker.getHighestScore();
+		
+		DbUtilities db = new DbUtilities();
+		StringBuilder query = new StringBuilder(250);
+		String otherUserName;
+		int otherUserScore;
+		
+		query.append("SELECT lastName,firstName,MAX(scoreValue) ");
+		query.append("FROM finalscores JOIN users ON fk_userID = userID ");
+		query.append("GROUP BY lastName,firstName ");
+		query.append("ORDER BY MAX(scoreValue) DESC");
+		try{
+			ResultSet rs = db.getResultSet(query.toString());
+			rs.next();
+			otherUserName = rs.getString(2) + " " + rs.getString(1);
+			otherUserScore = rs.getInt(3);
+		} catch(Exception e) {
+			e.printStackTrace();
+			otherUserName = "CONNECTION ERROR";
+			otherUserScore = Integer.MIN_VALUE;
+		}
+		
+		String message = "Your highest score: " + highscore + "\n";
+		message += "Leader (" + otherUserName + ") score: " + otherUserScore;
+		
+		JOptionPane.showMessageDialog(null, message);
 	}
 	
 	/**

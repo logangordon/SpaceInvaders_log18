@@ -66,6 +66,10 @@ public class ScoreTracker {
 	}
 	
 	public void recordFinalScore(){
+		if(currentScore > highestScore){
+			highestScore = currentScore;
+		}
+		
 		DbUtilities db = new DbUtilities();
 		StringBuilder query = new StringBuilder(300);
 		query.append("INSERT INTO finalscores ");
