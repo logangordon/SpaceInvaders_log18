@@ -127,10 +127,11 @@ public class User {
 		query.append("UPDATE users ");
 		query.append("SET lastName = '" + this.lastName + "','");
 		query.append("firstName = '" + this.firstName + "','");
-		query.append("email = " + this.email + "'; ");
+		query.append("email = " + this.email + "' ");
 		if(this.password != null){
 			query.append(",password = MD5('" + this.password + "')");
 		}
+		query.append(";");
 		db.executeQuery(query.toString());
 	}
 }

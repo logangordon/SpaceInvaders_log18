@@ -32,12 +32,12 @@ public class ScoreTracker {
 		
 		DbUtilities db = new DbUtilities();
 		StringBuilder query = new StringBuilder(300);
-		query.append("SELECT MAX(scoreValue) FROM finalscores ");
+		query.append("SELECT MAX(scoreValue) as `maxScore` FROM finalscores ");
 		query.append("WHERE fk_userID = '" + user.getUserID() + "'; ");
 		ResultSet rs = db.getResultSet(query.toString());
 		try{
 			if(rs.next()){
-				this.highestScore = rs.getInt(1);
+				this.highestScore = rs.getInt("maxScore");
 			} else {
 				this.highestScore = 0;
 			}

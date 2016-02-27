@@ -152,7 +152,7 @@ public class Game extends Canvas {
 	 * multiple DB calls and pop-up notifications
 	 */
 	private void endGame(){
-		if(!gameOver){
+		if(!gameOver){ // Flag in case of multiple simultaneous Game End notifications
 			gameOver = true;
 			ScoreTracker.scoreTracker.recordFinalScore();
 			displayHighScore();
@@ -218,29 +218,32 @@ public class Game extends Canvas {
 	}
 	
 	public void displayHighScore(){
-		int highscore = ScoreTracker.scoreTracker.getHighestScore();
+		int highScore = ScoreTracker.scoreTracker.getHighestScore();
+		int currentScore = ScoreTracker.scoreTracker.getCurrentScore();
 		
 		DbUtilities db = new DbUtilities();
 		StringBuilder query = new StringBuilder(250);
 		String otherUserName;
 		int otherUserScore;
 		
-		query.append("SELECT lastName,firstName,MAX(scoreValue) ");
+		query.append("SELECT lastName,firstName,MAX(scoreValue) as `maxScore` ");
 		query.append("FROM finalscores JOIN users ON fk_userID = userID ");
 		query.append("GROUP BY lastName,firstName ");
-		query.append("ORDER BY MAX(scoreValue) DESC");
+		query.append("ORDER BY MAX(scoreValue) DESC " );
+		query.append("LIMIT 1;");
 		try{
 			ResultSet rs = db.getResultSet(query.toString());
 			rs.next();
-			otherUserName = rs.getString(2) + " " + rs.getString(1);
-			otherUserScore = rs.getInt(3);
+			otherUserName = rs.getString("firstName") + " " + rs.getString("lastName");
+			otherUserScore = rs.getInt("maxScore");
 		} catch(Exception e) {
 			e.printStackTrace();
 			otherUserName = "CONNECTION ERROR";
 			otherUserScore = Integer.MIN_VALUE;
 		}
 		
-		String message = "Your highest score: " + highscore + "\n";
+		String message = "Your current score: " + currentScore + "\n";
+		message += "Your highest score: " + highScore + "\n";
 		message += "Leader (" + otherUserName + ") score: " + otherUserScore;
 		
 		JOptionPane.showMessageDialog(null, message);
